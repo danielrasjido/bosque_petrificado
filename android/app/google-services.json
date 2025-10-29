@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "150259240479",
+    "project_id": "bosque-petrificado",
+    "storage_bucket": "bosque-petrificado.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:150259240479:android:80ff10d37b60a054010f2a",
+        "android_client_info": {
+          "package_name": "com.bosque.petrificado.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmMPwLwgCsnKEMPx7le6-CdrgidYFMWdg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:150259240479:android:c12b973ed18f53e6010f2a",
+        "android_client_info": {
+          "package_name": "com.example.bosque_petrificado"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmMPwLwgCsnKEMPx7le6-CdrgidYFMWdg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
