@@ -16,7 +16,7 @@ class NavegadorDrawer extends StatelessWidget{
             decoration: BoxDecoration(color: Colors.brown),
 
             child: Text(
-                'text oejasdfasdfmplo',
+                'Menú de la aplicacion',
               style: TextStyle(
                 color: Colors.white
               ),
@@ -36,7 +36,7 @@ class NavegadorDrawer extends StatelessWidget{
 
           ListTile(
             leading: Icon(Icons.place),
-            title: const Text("Parada 1"),
+            title: const Text("Paradas"),
             onTap: (){
               Navigator.pop(context); // cierra el drawer
               Navigator.push(

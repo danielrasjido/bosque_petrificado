@@ -22,9 +22,9 @@ Future<void> main() async {
     print('Creando una nueva parada...');
     final nuevaParada = ParadasDTO(
       id: '',
-      nombreParada: 'Sendero 5',
-      tituloParada: 'Inicio del recorrido',
-      descripcionParada: 'Parada creada para probar el servicio.',
+      nombreParada: 'Sendero KLASDFKLADSKLFJ',
+      tituloParada: 'Inicio deKLSAJDFKLD l recorrido',
+      descripcionParada: 'Parada crKLADJFKLAJSDFPJeada para probar el servicio.',
       imagen: 'img_test.jpg',
       audio: 'audio_test.mp3',
       imagenAudioguia: 'audioguia_test.jpg',
