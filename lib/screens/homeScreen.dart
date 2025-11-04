@@ -10,7 +10,7 @@ import '../services/PodometroService.dart';
 import '../config/appConfig.dart';
 
 class HomeScreen extends StatefulWidget{
-  final UsuarioService usuarioService;
+  final UsuariosService usuarioService;
   const HomeScreen({super.key, required this.usuarioService});
 
   State<HomeScreen> createState() => _MyAppState();
@@ -39,10 +39,10 @@ class _MyAppState extends State<HomeScreen>{
   Future<void> _cargarUsuario() async {
     try {
       // este es literalmente el id del usuario
-      final nombre = await widget.usuarioService.traerNombreUsuario('68f6d5440018f89441ed');
+      final usuario = await widget.usuarioService.obtenerUsuarioPorId('68f6d5440018f89441ed');
 
       setState(() {
-        nombreUsuario = nombre;
+        nombreUsuario = usuario.nombre;
         isLoading = false;
       });
     } catch (e) {

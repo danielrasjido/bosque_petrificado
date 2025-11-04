@@ -13,13 +13,13 @@ void main() async {
   appwriteService.init();
 
 
-  final usuarioService = UsuarioService(databases: appwriteService.databases);
+  final usuarioService = UsuariosService(databases: appwriteService.databases);
 
   runApp(MyApp(usuarioService: usuarioService));
 }
 
 class MyApp extends StatefulWidget{
-  final UsuarioService usuarioService;
+  final UsuariosService usuarioService;
   const MyApp({super.key, required this.usuarioService});
 
   State<MyApp> createState() => _MyAppState();
