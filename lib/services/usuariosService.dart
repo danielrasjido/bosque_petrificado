@@ -1,56 +1,114 @@
-//import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:appwrite/appwrite.dart';
-class UsuarioService {
+import 'package:bosque_petrificado/models/UsuariosDTO.dart';
+import 'package:bosque_petrificado/config/appConfig.dart';
+import 'package:bosque_petrificado/exceptions/usuariosException.dart';
+
+class UsuariosService {
   final Databases _databases;
 
-  // Recibir databases por constructor
-  UsuarioService({required Databases databases}) : _databases = databases;
+  static const String idDB = AppConfig.idDatabase;
+  static const String idCollection = AppConfig.idCollectionUsuarios; //
 
+  UsuariosService({required Databases databases}) : _databases = databases;
 
-  Future<String> traerNombres() async {
+  ///LISTAR USUARIOS
+  Future<List<UsuariosDTO>> listarUsuarios() async {
     try {
-      final response = await _databases.listDocuments(
-        databaseId: '68f6cb32001b9d6b8649',
-        collectionId: 'Usuarios', // nombre de la colección
+      final result = await _databases.listDocuments(
+        databaseId: idDB,
+        collectionId: idCollection,
       );
 
-      if (response.documents.isEmpty) {
-        return 'No hay usuarios registrados.';
+      final usuarios = result.documents
+          .map((doc) => UsuariosDTO.fromDocument(doc.data, doc.$id))
+          .toList();
+
+      return usuarios;
+    } on AppwriteException catch (e) {
+      throw UsuariosException('Error al listar usuarios: ${e.message}', code: e.code);
+    } catch (e) {
+      throw UsuariosException('Error desconocido al listar usuarios: $e');
+    }
+  }
+
+  ///OBTENER USUARIO POR ID
+  Future<UsuariosDTO?> obtenerUsuarioPorId(String id) async {
+    try {
+      final result = await _databases.getDocument(
+        databaseId: idDB,
+        collectionId: idCollection,
+        documentId: id,
+      );
+
+      final usuario = UsuariosDTO.fromDocument(result.data, result.$id);
+      return usuario;
+    } on AppwriteException catch (e) {
+      throw UsuariosException('Error al obtener usuario: ${e.message}', code: e.code);
+    } catch (e) {
+      throw UsuariosException('Error desconocido al obtener usuario: $e');
+    }
+  }
+
+  ///CREAR USUARIO
+  Future<bool> crearUsuario(UsuariosDTO usuario) async {
+    try {
+      await _databases.createDocument(
+        databaseId: idDB,
+        collectionId: idCollection,
+        documentId: ID.unique(),
+        data: usuario.toMap(),
+      );
+      return true;
+    } on AppwriteException catch (e) {
+      throw UsuariosException('Error al crear el usuario: ${e.message}', code: e.code);
+    } catch (e) {
+      throw UsuariosException('Error desconocido al crear usuario: $e');
+    }
+  }
+
+  ///ACTUALIZAR USUARIO
+  Future<UsuariosDTO> actualizarUsuario(UsuariosDTO usuario) async {
+    try {
+      if (usuario.id.isEmpty) {
+        throw UsuariosException('No se puede actualizar un usuario sin ID');
       }
 
-      // Mapear los nombres
-      final nombres = response.documents.map((doc) {
-        final data = doc.data;
-        return data['nombre'] ?? 'Sin nombre';
-      }).join(', ');
+      final result = await _databases.updateDocument(
+        databaseId: idDB,
+        collectionId: idCollection,
+        documentId: usuario.id,
+        data: usuario.toMap(),
+      );
 
-      print('Nombres obtenidos: $nombres');
-      return nombres;
+      return UsuariosDTO.fromDocument(result.data, result.$id);
+    } on AppwriteException catch (e) {
+      throw UsuariosException('Error al actualizar el usuario: ${e.message}', code: e.code);
     } catch (e) {
-      print('Error trayendo nombres: $e');
-      return 'Error: $e';
+      throw UsuariosException('Error desconocido al actualizar usuario: $e');
     }
   }
 
-
-
-
-  Future<String> traerNombreUsuario(String userId) async {
+  ///ELIMINAR USUARIO
+  Future<UsuariosDTO> eliminarUsuario(String id) async {
     try {
-      final doc = await _databases.getDocument(
-        databaseId: '68f6cb32001b9d6b8649',
-        collectionId: 'Usuarios',
-        documentId: userId,
-      ); //hacemos el fetch al backend
+      final usuarioEliminado = await obtenerUsuarioPorId(id);
+      if (usuarioEliminado == null) {
+        throw UsuariosException('No se encontró el usuario con ID $id');
+      }
 
-      final data = doc.data; //mapeamos los datos
-      print('###########Usuario obtenido: $data');
-      return data['nombre'] ?? 'Sin nombre';
+      await _databases.deleteDocument(
+        databaseId: idDB,
+        collectionId: idCollection,
+        documentId: id,
+      );
+
+      return usuarioEliminado;
+    } on AppwriteException catch (e) {
+      throw UsuariosException('Error al eliminar el usuario: ${e.message}', code: e.code);
     } catch (e) {
-      print('###########Error trayendo usuario: $e');
-      return 'Error: $e';
+      throw UsuariosException('Error desconocido al eliminar usuario: $e');
     }
   }
-
 }
+
 
