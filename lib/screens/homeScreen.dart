@@ -42,7 +42,11 @@ class _MyAppState extends State<HomeScreen>{
       final usuario = await widget.usuarioService.obtenerUsuarioPorId('68f6d5440018f89441ed');
 
       setState(() {
-        nombreUsuario = usuario.nombre;
+        if (usuario != null) {
+          nombreUsuario = usuario.nombre;
+        } else {
+          nombreUsuario = 'Usuario no encontrado';
+        }
         isLoading = false;
       });
     } catch (e) {

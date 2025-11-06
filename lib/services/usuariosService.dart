@@ -49,6 +49,28 @@ class UsuariosService {
     }
   }
 
+  ///OBTENER USUARIO POR EMAIL
+  Future<UsuariosDTO?> obtenerUsuarioPorEmail(String email) async {
+    try {
+      final result = await _databases.listDocuments(
+        databaseId: idDB,
+        collectionId: idCollection,
+        queries: [
+          Query.equal('correoElectronico', email),
+        ],
+      );
+
+      if (result.documents.isEmpty) return null;
+
+      final doc = result.documents.first;
+      return UsuariosDTO.fromDocument(doc.data, doc.$id);
+    } on AppwriteException catch (e) {
+      throw UsuariosException('Error al buscar usuario: ${e.message}', code: e.code);
+    } catch (e) {
+      throw UsuariosException('Error desconocido al buscar usuario: $e');
+    }
+  }
+
   ///CREAR USUARIO
   Future<bool> crearUsuario(UsuariosDTO usuario) async {
     try {
