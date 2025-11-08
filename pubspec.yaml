@@ -40,6 +40,8 @@ dependencies:
   permission_handler: ^12.0.1
   appwrite: ^20.2.1
   google_fonts: ^6.3.2
+  url_launcher: ^6.2.6
+  flutter_health_connect: 1.2.2
 
 dev_dependencies:
   flutter_test:

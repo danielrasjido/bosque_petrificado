@@ -76,35 +76,70 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
+    final Color colorPrincipal = Theme.of(context).colorScheme.primary;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Iniciar sesión')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Correo electrónico'),
+      body: Center( // paracentrar horizontal y vertical
+        child: SingleChildScrollView( // esto permite scroll si el teclado se abre
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Container(
+              width: 380,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border(
+                  top: BorderSide(color: colorPrincipal, width: 15), // borde superior más grueso
+                  left: BorderSide(color: colorPrincipal, width: 1.5),
+                  right: BorderSide(color: colorPrincipal, width: 1.5),
+                  bottom: BorderSide(color: colorPrincipal, width: 1.5),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Iniciar sesión',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: _emailController,
+                    decoration: const InputDecoration(labelText: 'Correo electrónico'),
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _passwordController,
+                    obscureText: true,
+                    decoration: const InputDecoration(labelText: 'Contraseña'),
+                  ),
+                  const SizedBox(height: 20),
+                  if (_error != null)
+                    Text(_error!, style: const TextStyle(color: Colors.red)),
+                  const SizedBox(height: 20),
+                  _cargando
+                      ? const CircularProgressIndicator()
+                      : ElevatedButton(
+                    onPressed: _iniciarSesion,
+                    child: const Text('Ingresar'),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(labelText: 'Contraseña'),
-            ),
-            const SizedBox(height: 20),
-            if (_error != null)
-              Text(_error!, style: const TextStyle(color: Colors.red)),
-            const SizedBox(height: 20),
-            _cargando
-                ? const CircularProgressIndicator()
-                : ElevatedButton(
-              onPressed: _iniciarSesion,
-              child: const Text('Ingresar'),
-            ),
-          ],
+          ),
         ),
       ),
     );
