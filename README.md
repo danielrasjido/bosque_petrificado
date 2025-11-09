@@ -1,16 +1,7 @@
 # bosque_petrificado
 
-A new Flutter project.
+Esta es mi proyecto de flutter :)
 
-## Getting Started
+## sobre el proyecto
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Me estoy basando en el patrón de diseño mvc para separar por capas de responsabilidad los servicios de esta aplicación, además implementé otros patrones como dto. 
