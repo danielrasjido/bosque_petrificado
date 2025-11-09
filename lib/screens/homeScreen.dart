@@ -1,7 +1,7 @@
 import 'package:bosque_petrificado/widgets/navagadorDrawer.dart';
 import 'package:bosque_petrificado/widgets/tarjetaBienvenidaWidget.dart';
 import 'package:bosque_petrificado/widgets/tarjetaPodometroWidget.dart';
-
+import 'package:appwrite/appwrite.dart';
 import 'package:flutter/material.dart';
 
 import '../services/usuariosService.dart';
@@ -38,8 +38,18 @@ class _MyAppState extends State<HomeScreen>{
 
   Future<void> _cargarUsuario() async {
     try {
-      // este es literalmente el id del usuario
-      final usuario = await widget.usuarioService.obtenerUsuarioPorId('68f6d5440018f89441ed');
+      // Crear cliente temporal para obtener el usuario autenticado
+      final client = Client()
+        ..setEndpoint(AppConfig.endpoint)
+        ..setProject(AppConfig.idProject)
+        ..setSelfSigned(status: true);
+
+      final account = Account(client);
+      final sesionActiva = await account.get(); // obtiene la sesión actual de Appwrite
+
+      // Buscar datos del usuario autenticado por email en tu colección Usuarios
+      final usuario = await widget.usuarioService
+          .obtenerUsuarioPorEmail(sesionActiva.email ?? '');
 
       setState(() {
         if (usuario != null) {
@@ -54,6 +64,7 @@ class _MyAppState extends State<HomeScreen>{
         nombreUsuario = 'Error al cargar';
         isLoading = false;
       });
+      print('⚠️ Error al cargar usuario: $e');
     }
   }
 

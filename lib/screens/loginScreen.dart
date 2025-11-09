@@ -92,7 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
                 border: Border(
-                  top: BorderSide(color: colorPrincipal, width: 15), // borde superior más grueso
+                  top: BorderSide(color: colorPrincipal, width: 15), // borde superior 
                   left: BorderSide(color: colorPrincipal, width: 1.5),
                   right: BorderSide(color: colorPrincipal, width: 1.5),
                   bottom: BorderSide(color: colorPrincipal, width: 1.5),

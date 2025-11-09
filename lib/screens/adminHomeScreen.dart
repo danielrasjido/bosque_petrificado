@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:bosque_petrificado/screens/menuParadasScreen.dart';
 import 'package:bosque_petrificado/screens/loginScreen.dart';
+import 'package:bosque_petrificado/screens/adminParadasScreen.dart';
 import 'package:appwrite/appwrite.dart';
 import 'package:bosque_petrificado/services/authenthicationService.dart';
 import 'package:bosque_petrificado/config/appConfig.dart';
@@ -45,7 +46,7 @@ class AdminHomeScreen extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const MenuParadasScreen()),
+                MaterialPageRoute(builder: (context) => const AdminParadasScreen()),
               );
             },
           ),
