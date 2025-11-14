@@ -6,9 +6,7 @@ class AdminEditarParadaScreen extends StatefulWidget{
   final ParadasDTO parada;
 
   const AdminEditarParadaScreen({super.key, required this.parada});
-
-
-
+  
   @override
   State<AdminEditarParadaScreen> createState() => _AdminEditarParadaScreenState();
 

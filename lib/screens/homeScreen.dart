@@ -64,7 +64,7 @@ class _MyAppState extends State<HomeScreen>{
         nombreUsuario = 'Error al cargar';
         isLoading = false;
       });
-      print('⚠️ Error al cargar usuario: $e');
+      print('Error al cargar usuario: $e');
     }
   }
 
