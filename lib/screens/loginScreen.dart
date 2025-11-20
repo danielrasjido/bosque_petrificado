@@ -17,7 +17,9 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _cargando = false;
+  bool _mostrarPassword = false;
   String? _error;
+
 
   late AuthenticationService _authService;
 
