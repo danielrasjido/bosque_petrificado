@@ -45,6 +45,15 @@ class ParadasService{
 
   Future<bool> crearParada(ParadasDTO parada) async {
     try{
+
+      //verificar ordden
+      final existe = await existeOrden(parada.orden);
+      if (existe) {
+        throw ParadasException(
+          'Ya existe una parada con el orden ${parada.orden}',
+        );
+      }
+
       //para que appwrite maneje los id uso ID.unique() que es una utilida que viene con el packete de appwrite sxd
       await _databases.createDocument(databaseId: idDB, collectionId: idCollection, documentId: ID.unique(), data: parada.toMap());
       return true;
@@ -59,6 +68,23 @@ class ParadasService{
     try {
       if (parada.id.isEmpty) {
         throw ParadasException('No se puede actualizar una parada sin ID');
+      }
+
+      // Obtener la parada original
+      final paradaOriginal = await obtenerParadaPorId(parada.id);
+
+      if (paradaOriginal == null) {
+        throw ParadasException('La parada no existe');
+      }
+
+      // --- Validación de orden único ---
+      if (parada.orden != paradaOriginal.orden) {
+        final existe = await existeOrden(parada.orden);
+        if (existe) {
+          throw ParadasException(
+            'El orden ${parada.orden} ya está asignado a otra parada',
+          );
+        }
       }
 
       final result = await _databases.updateDocument(
@@ -107,4 +133,24 @@ class ParadasService{
      throw ParadasException('Error desconocido al eliminar la parada: $e');
    }
  }
+
+  /// Verifica si ya existe una parada con un orden específico
+  Future<bool> existeOrden(int orden) async {
+    try {
+      final result = await _databases.listDocuments(
+        databaseId: idDB,
+        collectionId: idCollection,
+        queries: [
+          Query.equal('orden', orden),
+        ],
+      );
+
+      return result.documents.isNotEmpty;
+    } catch (e) {
+      print("Error verificando orden: $e");
+      return false;
+    }
+  }
+
+
 }
