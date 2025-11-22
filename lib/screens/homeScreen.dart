@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 
 import '../services/usuariosService.dart';
 import '../services/PodometroService.dart';
+import '../services/serviceLocator.dart';
+
+import '../screens/loginScreen.dart';
 
 import '../config/appConfig.dart';
 
@@ -105,6 +108,25 @@ class _MyAppState extends State<HomeScreen>{
     });
   }
 
+  Future<void> _cerrarSesion() async {
+    try {
+      final authService = ServiceLocator().authService;
+
+      await authService.logout();
+
+      if (!mounted) return;
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const LoginScreen(),
+        ),
+      );
+    } catch (e) {
+      print("Error al cerrar sesión: $e");
+    }
+  }
+
 
   //interfaz de la app
   @override
@@ -112,7 +134,13 @@ class _MyAppState extends State<HomeScreen>{
     return Scaffold(
 
         appBar: AppBar(
-          title: const Text("Bosque petrificado")
+          title: const Text("Bosque petrificado"),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: _cerrarSesion,
+            )
+          ],
         ),
 
         drawer: NavegadorDrawer(),

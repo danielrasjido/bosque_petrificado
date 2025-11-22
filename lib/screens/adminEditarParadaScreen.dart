@@ -1,13 +1,11 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:appwrite/appwrite.dart';
 
 import 'package:bosque_petrificado/config/appConfig.dart';
 import 'package:bosque_petrificado/models/ParadasDTO.dart';
 import 'package:bosque_petrificado/services/paradasService.dart';
-import 'package:bosque_petrificado/services/authenthicationService.dart';
 import 'package:bosque_petrificado/services/serviceLocator.dart';
-import 'package:appwrite/appwrite.dart';
 
 class AdminEditarParadaScreen extends StatefulWidget {
   final ParadasDTO parada;
@@ -23,7 +21,6 @@ class _AdminEditarParadaScreenState extends State<AdminEditarParadaScreen> {
   final _formKey = GlobalKey<FormState>();
 
   late ParadasService _paradasService;
-  late AuthenticationService _authService;
   late Storage _storage;
 
   bool _cargando = false;
@@ -31,6 +28,7 @@ class _AdminEditarParadaScreenState extends State<AdminEditarParadaScreen> {
   late TextEditingController _nombreController;
   late TextEditingController _tituloController;
   late TextEditingController _descripcionController;
+
   late TextEditingController _imagenController;
   late TextEditingController _audioController;
   late TextEditingController _imagenAudioguiaController;
@@ -38,9 +36,8 @@ class _AdminEditarParadaScreenState extends State<AdminEditarParadaScreen> {
   @override
   void initState() {
     super.initState();
-    _paradasService = ServiceLocator().paradasService;
-    _authService = ServiceLocator().authService;
 
+    _paradasService = ServiceLocator().paradasService;
     _storage = Storage(ServiceLocator().client);
 
     _nombreController =
@@ -49,16 +46,14 @@ class _AdminEditarParadaScreenState extends State<AdminEditarParadaScreen> {
         TextEditingController(text: widget.parada.tituloParada);
     _descripcionController =
         TextEditingController(text: widget.parada.descripcionParada);
+
     _imagenController = TextEditingController(text: widget.parada.imagen);
     _audioController = TextEditingController(text: widget.parada.audio);
     _imagenAudioguiaController =
         TextEditingController(text: widget.parada.imagenAudioguia);
   }
 
-  // ─────────────────────────────────────────────────────────────────────────────
-  // SUBIR ARCHIVO A APPWRITE
-  // ─────────────────────────────────────────────────────────────────────────────
-
+  // SUBIR ARCHIVO
   Future<String?> _subirArchivo() async {
     final resultado = await FilePicker.platform.pickFiles();
 
@@ -71,10 +66,7 @@ class _AdminEditarParadaScreenState extends State<AdminEditarParadaScreen> {
       final respuesta = await _storage.createFile(
         bucketId: AppConfig.idBucketMultimedia,
         fileId: ID.unique(),
-        file: InputFile.fromPath(
-          path: path,
-          filename: fileName,
-        ),
+        file: InputFile.fromPath(path: path, filename: fileName),
       );
 
       return respuesta.$id;
@@ -89,10 +81,7 @@ class _AdminEditarParadaScreenState extends State<AdminEditarParadaScreen> {
     }
   }
 
-  // ─────────────────────────────────────────────────────────────────────────────
   // GUARDAR CAMBIOS
-  // ─────────────────────────────────────────────────────────────────────────────
-
   Future<void> _guardarCambios() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -132,6 +121,41 @@ class _AdminEditarParadaScreenState extends State<AdminEditarParadaScreen> {
     }
   }
 
+  // campo archivo
+  Widget _campoArchivo({
+    required String label,
+    required TextEditingController controller,
+  }) {
+    return Row(
+      children: [
+        Expanded(
+          child: TextFormField(
+            controller: controller,
+            readOnly: true, // ← ← ← CLAVE
+            decoration: InputDecoration(
+              labelText: label,
+              hintText: "Archivo seleccionado",
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        ElevatedButton(
+          onPressed: () async {
+            final idArchivo = await _subirArchivo();
+            if (idArchivo != null) {
+              controller.text = idArchivo; // ← ID real de Appwrite
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            backgroundColor: AppConfig.colorPrincipal,
+          ),
+          child: const Icon(Icons.upload_file),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -145,8 +169,10 @@ class _AdminEditarParadaScreenState extends State<AdminEditarParadaScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text("Datos básicos",
-                  style: Theme.of(context).textTheme.titleLarge),
+              Text(
+                "Datos básicos",
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
               const SizedBox(height: 12),
 
               TextFormField(
@@ -168,37 +194,37 @@ class _AdminEditarParadaScreenState extends State<AdminEditarParadaScreen> {
               TextFormField(
                 controller: _descripcionController,
                 maxLines: 5,
-                decoration:
-                const InputDecoration(labelText: "Descripción (es)"),
+                decoration: const InputDecoration(labelText: "Descripción (es)"),
                 validator: (value) =>
                 value!.trim().isEmpty ? "Campo obligatorio" : null,
               ),
+
               const SizedBox(height: 20),
 
-              Text("Multimedia",
-                  style: Theme.of(context).textTheme.titleLarge),
+              Text(
+                "Multimedia",
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
               const SizedBox(height: 12),
 
-              _archivoConBoton(
-                label: "Imagen (ID)",
+              _campoArchivo(
+                label: "Imagen",
                 controller: _imagenController,
               ),
-
               const SizedBox(height: 12),
 
-              _archivoConBoton(
-                label: "Audio (ID)",
+              _campoArchivo(
+                label: "Audio",
                 controller: _audioController,
               ),
-
               const SizedBox(height: 12),
 
-              _archivoConBoton(
-                label: "Imagen Audioguía (ID)",
+              _campoArchivo(
+                label: "Imagen Audioguía",
                 controller: _imagenAudioguiaController,
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
 
               _cargando
                   ? const Center(child: CircularProgressIndicator())
@@ -210,43 +236,6 @@ class _AdminEditarParadaScreenState extends State<AdminEditarParadaScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  // ─────────────────────────────────────────────────────────────────────────────
-  // WIDGET: CAMPO + BOTÓN PARA SUBIR ARCHIVO
-  // ─────────────────────────────────────────────────────────────────────────────
-
-  Widget _archivoConBoton({
-    required String label,
-    required TextEditingController controller,
-  }) {
-    return Row(
-      children: [
-        Expanded(
-          child: TextFormField(
-            controller: controller,
-            decoration: InputDecoration(
-              labelText: label,
-              hintText: "ID del archivo",
-            ),
-          ),
-        ),
-        const SizedBox(width: 10),
-        ElevatedButton(
-          onPressed: () async {
-            final id = await _subirArchivo();
-            if (id != null) {
-              controller.text = id;
-            }
-          },
-          style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            backgroundColor: AppConfig.colorPrincipal,
-          ),
-          child: const Icon(Icons.upload_file),
-        ),
-      ],
     );
   }
 }
