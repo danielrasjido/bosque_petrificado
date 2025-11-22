@@ -28,10 +28,10 @@ class _AdminEditarParadaScreenState extends State<AdminEditarParadaScreen> {
   late TextEditingController _nombreController;
   late TextEditingController _tituloController;
   late TextEditingController _descripcionController;
-
   late TextEditingController _imagenController;
   late TextEditingController _audioController;
   late TextEditingController _imagenAudioguiaController;
+  late TextEditingController _ordenController;
 
   @override
   void initState() {
@@ -39,18 +39,13 @@ class _AdminEditarParadaScreenState extends State<AdminEditarParadaScreen> {
 
     _paradasService = ServiceLocator().paradasService;
     _storage = Storage(ServiceLocator().client);
-
-    _nombreController =
-        TextEditingController(text: widget.parada.nombreParada);
-    _tituloController =
-        TextEditingController(text: widget.parada.tituloParada);
-    _descripcionController =
-        TextEditingController(text: widget.parada.descripcionParada);
-
+    _nombreController = TextEditingController(text: widget.parada.nombreParada);
+    _tituloController = TextEditingController(text: widget.parada.tituloParada);
+    _descripcionController = TextEditingController(text: widget.parada.descripcionParada);
     _imagenController = TextEditingController(text: widget.parada.imagen);
     _audioController = TextEditingController(text: widget.parada.audio);
-    _imagenAudioguiaController =
-        TextEditingController(text: widget.parada.imagenAudioguia);
+    _imagenAudioguiaController = TextEditingController(text: widget.parada.imagenAudioguia);
+    _ordenController = TextEditingController(text: widget.parada.orden.toString());
   }
 
   // SUBIR ARCHIVO
@@ -95,6 +90,7 @@ class _AdminEditarParadaScreenState extends State<AdminEditarParadaScreen> {
         imagen: _imagenController.text.trim(),
         audio: _audioController.text.trim(),
         imagenAudioguia: _imagenAudioguiaController.text.trim(),
+        orden: int.parse(_ordenController.text.trim()),
       );
 
       await _paradasService.actualizarParada(paradaActualizada);
@@ -198,6 +194,27 @@ class _AdminEditarParadaScreenState extends State<AdminEditarParadaScreen> {
                 validator: (value) =>
                 value!.trim().isEmpty ? "Campo obligatorio" : null,
               ),
+
+              const SizedBox(height: 12),
+
+              TextFormField(
+                controller: _ordenController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: "Orden de la parada (1–10)"),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return "Campo obligatorio";
+                  }
+
+                  final n = int.tryParse(value);
+                  if (n == null || n <= 0) {
+                    return "Debe ser un número entero mayor a 0";
+                  }
+
+                  return null;
+                },
+              ),
+
 
               const SizedBox(height: 20),
 

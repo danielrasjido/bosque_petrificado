@@ -28,8 +28,9 @@ class _AdminCrearParadaScreenState extends State<AdminCrearParadaScreen> {
 
   final TextEditingController _imagenController = TextEditingController();
   final TextEditingController _audioController = TextEditingController();
-  final TextEditingController _imagenAudioguiaController =
-  TextEditingController();
+  final TextEditingController _imagenAudioguiaController = TextEditingController();
+  final TextEditingController _ordenController = TextEditingController();
+
 
   @override
   void initState() {
@@ -84,11 +85,21 @@ class _AdminCrearParadaScreenState extends State<AdminCrearParadaScreen> {
         imagen: _imagenController.text.trim(),
         audio: _audioController.text.trim(),
         imagenAudioguia: _imagenAudioguiaController.text.trim(),
+        orden: int.parse(_ordenController.text.trim()),
       );
 
       await _paradasService.crearParada(nuevaParada);
 
       if (!mounted) return;
+
+      //para limpiar los campos
+      _nombreController.clear();
+      _tituloController.clear();
+      _descripcionController.clear();
+      _imagenController.clear();
+      _audioController.clear();
+      _imagenAudioguiaController.clear();
+      _ordenController.clear();
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -184,6 +195,26 @@ class _AdminCrearParadaScreenState extends State<AdminCrearParadaScreen> {
                 decoration: const InputDecoration(labelText: "Descripción (es)"),
                 validator: (value) =>
                 value!.trim().isEmpty ? "Campo obligatorio" : null,
+              ),
+
+              const SizedBox(height: 12),
+
+              TextFormField(
+                controller: _ordenController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: "Orden de la parada (1–10)"),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return "Campo obligatorio";
+                  }
+
+                  final n = int.tryParse(value);
+                  if (n == null || n <= 0) {
+                    return "Debe ser un número entero mayor a 0";
+                  }
+
+                  return null;
+                },
               ),
 
               const SizedBox(height: 20),

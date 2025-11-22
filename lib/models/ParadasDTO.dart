@@ -8,6 +8,7 @@ class ParadasDTO{
   final String imagen;          // ID del archivo
   final String audio;           // ID del archivo
   final String imagenAudioguia;  // ID del archivo
+  final int orden;
 
   ParadasDTO({
     required this.id,
@@ -17,6 +18,7 @@ class ParadasDTO{
     required this.imagen,
     required this.audio,
     required this.imagenAudioguia,
+    required this.orden
   });
 
 
@@ -30,6 +32,7 @@ class ParadasDTO{
       imagen: data['imagen'] ?? '',
       audio: data['audioParada_es'] ?? '',
       imagenAudioguia: data['imagenAudioguia'] ?? '',
+      orden: data['orden'] ?? 0,
     );
   }
 
@@ -41,7 +44,8 @@ class ParadasDTO{
       'descripcionParada_es': descripcionParada,
       'imagen': imagen,
       'audioParada_es': audio,
-      'imagenAudioguia': imagenAudioguia
+      'imagenAudioguia': imagenAudioguia,
+      'orden': orden,
     };
   }
 
@@ -53,6 +57,7 @@ class ParadasDTO{
     String? imagen,
     String? audio,
     String? imagenAudioguia,
+    int? orden,
   }) {
     return ParadasDTO(
       id: id,
@@ -62,6 +67,7 @@ class ParadasDTO{
       imagen: imagen ?? this.imagen,
       audio: audio ?? this.audio,
       imagenAudioguia: imagenAudioguia ?? this.imagenAudioguia,
+      orden: orden ?? this.orden,
     );
   }
 
@@ -79,6 +85,7 @@ class ParadasDTO{
       imagen: data['imagen'] ?? '',
       audio: data['audioParada_es'] ?? '',
       imagenAudioguia: data['imagenAudioguia'] ?? '',
+      orden: data['orden'] ?? 0,
     );
   }
 

@@ -55,17 +55,16 @@ class ParadasService{
     }
   }
 
-
   Future<ParadasDTO> actualizarParada(ParadasDTO parada) async {
     try {
-      if (parada.id == null) {
+      if (parada.id.isEmpty) {
         throw ParadasException('No se puede actualizar una parada sin ID');
       }
 
       final result = await _databases.updateDocument(
         databaseId: idDB,
         collectionId: idCollection,
-        documentId: parada.id!,
+        documentId: parada.id,
         data: parada.toMap(),
       );
 
