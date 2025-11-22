@@ -23,7 +23,7 @@ class AuthenticationService {
       //Buscar si existe en la colección "Usuarios"
       final usuario = await _usuariosService.obtenerUsuarioPorEmail(user.email ?? '');
 
-      // 4️⃣ Si no existe en la colección, crear uno temporal (no guardado aún)
+      // Si no existe en la colección, crear uno temporal (no guardado aún)
       if (usuario == null) {
         return UsuariosDTO(
           id: '',

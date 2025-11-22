@@ -41,7 +41,7 @@ dependencies:
   appwrite: ^20.2.1
   google_fonts: ^6.3.2
   url_launcher: ^6.2.6
-  flutter_health_connect: 1.2.2
+  file_picker: ^10.3.7
 
 dev_dependencies:
   flutter_test:
