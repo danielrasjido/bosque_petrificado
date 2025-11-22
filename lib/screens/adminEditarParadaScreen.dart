@@ -255,4 +255,16 @@ class _AdminEditarParadaScreenState extends State<AdminEditarParadaScreen> {
       ),
     );
   }
+  @override
+  void dispose() {
+    _nombreController.dispose();
+    _tituloController.dispose();
+    _descripcionController.dispose();
+    _imagenController.dispose();
+    _audioController.dispose();
+    _imagenAudioguiaController.dispose();
+    _ordenController.dispose();
+    super.dispose();
+  }
+
 }
