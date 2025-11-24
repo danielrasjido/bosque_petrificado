@@ -36,7 +36,7 @@ class TarjetaBienvenidaWidget extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Tu recorrido comienza aquí 🌲\nCada paso cuenta.',
+              'Tu recorrido comienza aquí \nCada paso cuenta.',
               textAlign: TextAlign.center,
               style: Theme.of(context)
                   .textTheme

@@ -31,11 +31,19 @@ class _MyAppState extends State<HomeScreen>{
   bool podometroInicializado = false;
   bool podometroCargando = true;
 
+  //para iniciar el recorrido
+  bool recorridoActivo = false;
+  int pasosInicio = 0;
+  int pasosRecorridos = 0;
+  DateTime? inicioRecorrido;
+
+
   @override
   void initState() {
     super.initState();
     _cargarUsuario();
     _configurarListenersPodometro();
+    _verificarEstadoRecorrido();
     _iniciarPodometro();
   }
 
@@ -77,6 +85,28 @@ class _MyAppState extends State<HomeScreen>{
       if (mounted) {
         setState(() {
           pasos = nuevosPasos;
+
+          if (recorridoActivo) {
+            pasosRecorridos = pasos - pasosInicio;
+
+            // Si llega a 5000, procesar paso se desbloquea una parada
+            if (pasosRecorridos >= 5000) {
+              _procesarDesbloqueo();
+            }
+
+            //esto es para ver si funciona el calculo del recorrido
+            if (pasosRecorridos.toInt() >= 5) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("TEST OK: Llegaste a 10 pasos"),
+                  backgroundColor: Colors.blue,
+                ),
+              );
+            }
+
+          }//segundo if
+
+
         });
       }
     };
@@ -127,6 +157,40 @@ class _MyAppState extends State<HomeScreen>{
     }
   }
 
+  Future<void> _verificarEstadoRecorrido() async {
+    final recorridoService = ServiceLocator().recorridoService;
+
+    final inicio = await recorridoService.getInicio();
+    final pasos = await recorridoService.getPasosInicio();
+
+    if (inicio != null && pasos != null) {
+      setState(() {
+        recorridoActivo = true;
+        inicioRecorrido = DateTime.fromMillisecondsSinceEpoch(inicio);
+        pasosInicio = pasos;
+      });
+    }
+  }
+
+  Future<void> _iniciarRecorrido() async {
+    final recorridoService = ServiceLocator().recorridoService;
+
+    // Guardamos los pasos del momento inicial
+    await recorridoService.iniciarRecorrido(pasos);
+
+    setState(() {
+      recorridoActivo = true;
+      pasosInicio = pasos;
+      inicioRecorrido = DateTime.now();
+    });
+  }
+
+    Future<void> _procesarDesbloqueo() async {
+      print("desbloquear parada");
+
+    }
+
+
 
   //interfaz de la app
   @override
@@ -160,11 +224,38 @@ class _MyAppState extends State<HomeScreen>{
 
               const SizedBox(height: 30),
 
+              if (!recorridoActivo)
+                ElevatedButton(
+                  onPressed: _iniciarRecorrido,
+                  child: const Text("Iniciar recorrido"),
+                ),
+
+              if (recorridoActivo)
+                Column(
+                  children: [
+                    Text("Pasos recorridos: $pasosRecorridos",
+                        style: const TextStyle(fontSize: 18)),
+
+                    const SizedBox(height: 10),
+
+                    if (inicioRecorrido != null)
+                      Text(
+                        "Tiempo transcurrido: ${DateTime.now().difference(inicioRecorrido!).inMinutes} min",
+                        style: const TextStyle(fontSize: 18),
+                      ),
+
+                    const SizedBox(height: 30),
+                  ],
+                ),
+
               TarjetaPodometroWidget(
                 podometroCargando: podometroCargando,
                 podometroInicializado: podometroInicializado,
                 pasos: pasos,
                 onReiniciar: _reiniciarPodometro,
+                minutosRecorrido: recorridoActivo && inicioRecorrido != null
+                    ? DateTime.now().difference(inicioRecorrido!).inMinutes
+                    : null,
               ),
             ],
           ),

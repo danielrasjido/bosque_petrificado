@@ -28,6 +28,7 @@ Future<void> main() async {
       imagen: 'img_test.jpg',
       audio: 'audio_test.mp3',
       imagenAudioguia: 'audioguia_test.jpg',
+      orden: 99,
     );
 
     final creada = await paradasService.crearParada(nuevaParada);

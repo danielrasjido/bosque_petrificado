@@ -6,6 +6,8 @@ class TarjetaPodometroWidget extends StatelessWidget {
   final bool podometroInicializado;
   final int pasos;
   final VoidCallback onReiniciar;
+  final int? minutosRecorrido;
+
 
   const TarjetaPodometroWidget({
     super.key,
@@ -13,6 +15,7 @@ class TarjetaPodometroWidget extends StatelessWidget {
     required this.podometroInicializado,
     required this.pasos,
     required this.onReiniciar,
+    this.minutosRecorrido,
   });
 
   @override
@@ -28,12 +31,12 @@ class TarjetaPodometroWidget extends StatelessWidget {
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 25),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Tu recorrido', style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 20),
+            Text('Tu recorrido: ', style: Theme.of(context).textTheme.titleLarge),
+            //const SizedBox(height: 20),
 
             // Si el podómetro está cargando
             if (podometroCargando)
@@ -48,26 +51,32 @@ class TarjetaPodometroWidget extends StatelessWidget {
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
-                        CircularProgressIndicator(
-                          value: (pasos % 10000) / 10000,
-                          strokeWidth: 10,
-                          color: Theme.of(context).primaryColor,
-                          backgroundColor: AppConfig.colorSecundario,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
+
+
                             //Icon(Icons.directions_walk, color: AppConfig.colorPrincipal),
-                            SizedBox(width: 8),
-                            Text(
+                            //SizedBox(width: 8),
+
+                        Positioned(
+                            child: Text(
                               '$pasos pasos',
                               style: const TextStyle(
                                 fontSize: 28,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ],
                         ),
+
+
+                            //ESTO ES PARA MOSTRAR EL TIEMPO
+                            if (minutosRecorrido != null)
+                              Positioned(
+                                bottom: 10,
+                                child: Text(
+                                  "$minutosRecorrido min"
+                                ),
+                              ),
+
+
                       ],
                     ),
                   ),
