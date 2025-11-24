@@ -1,6 +1,7 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:bosque_petrificado/config/appConfig.dart';
 import 'package:bosque_petrificado/services/authenthicationService.dart';
+import 'package:bosque_petrificado/services/desbloqueaService.dart';
 import 'package:bosque_petrificado/services/recorridoService.dart';
 import 'package:bosque_petrificado/services/usuariosService.dart';
 import 'package:bosque_petrificado/services/paradasService.dart';
@@ -20,6 +21,8 @@ class ServiceLocator {
 
   late RecorridoService recorridoService;
 
+  late DesbloqueaService desbloqueaService;
+
   ServiceLocator._internal() {
     // Inicializamos el cliente UNA sola vez
     client = Client()
@@ -38,5 +41,7 @@ class ServiceLocator {
     authService = AuthenticationService(client, databases);
 
     recorridoService = RecorridoService();
+
+    desbloqueaService = DesbloqueaService(databases: databases);
   }
 }

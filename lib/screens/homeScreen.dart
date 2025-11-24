@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import '../services/usuariosService.dart';
 import '../services/PodometroService.dart';
 import '../services/serviceLocator.dart';
+import '../services/recorridoService.dart';
+import '../services/desbloqueaService.dart';
 
 import '../screens/loginScreen.dart';
 
@@ -81,7 +83,7 @@ class _MyAppState extends State<HomeScreen>{
 
   void _configurarListenersPodometro() {
     _podometroService.onPasosActualizados = (nuevosPasos) {
-      print("🔄 Pasos actualizados: $nuevosPasos");
+      print("Pasos actualizados: $nuevosPasos");
       if (mounted) {
         setState(() {
           pasos = nuevosPasos;
@@ -95,14 +97,15 @@ class _MyAppState extends State<HomeScreen>{
             }
 
             //esto es para ver si funciona el calculo del recorrido
+            /*
             if (pasosRecorridos.toInt() >= 5) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text("TEST OK: Llegaste a 10 pasos"),
+                  content: Text("TEST: 10 pasos"),
                   backgroundColor: Colors.blue,
                 ),
               );
-            }
+            }*/
 
           }//segundo if
 
@@ -185,10 +188,54 @@ class _MyAppState extends State<HomeScreen>{
     });
   }
 
-    Future<void> _procesarDesbloqueo() async {
-      print("desbloquear parada");
 
+
+  Future<void> _procesarDesbloqueo() async {
+    try {
+      final authService = ServiceLocator().authService;
+      final recorridoService = ServiceLocator().recorridoService;
+      final desbloqueaService = ServiceLocator().desbloqueaService;
+
+      final usuario = await authService.obtenerUsuarioActual();
+      if (usuario == null) return;
+
+      final parada = await desbloqueaService.desbloquearSiguienteParada(usuario.id);
+
+      // Limpiar recorrido
+      await recorridoService.limpiarRecorrido();
+
+      setState(() {
+        recorridoActivo = false;
+        pasosRecorridos = 0;
+        inicioRecorrido = null;
+      });
+
+      if (parada == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Ya desbloqueaste todas las paradas."),
+            backgroundColor: Colors.orange,
+          ),
+        );
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Parada desbloqueada: ${parada.nombreParada}"),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error al desbloquear parada: $e"),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
+  }
 
 
 

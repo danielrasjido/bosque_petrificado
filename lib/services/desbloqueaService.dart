@@ -1,6 +1,8 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:bosque_petrificado/config/appConfig.dart';
 import 'package:bosque_petrificado/models/DesbloqueaDTO.dart';
+import 'package:bosque_petrificado/models/ParadasDTO.dart';
+import 'package:bosque_petrificado/services/paradasService.dart';
 import 'package:bosque_petrificado/exceptions/desbloqueaException.dart';
 
 class DesbloqueaService {
@@ -105,4 +107,41 @@ class DesbloqueaService {
       );
     }
   }
+
+  Future<ParadasDTO?> desbloquearSiguienteParada(String usuarioId) async {
+    try {
+      final paradasService = ParadasService(databases: _databases);
+
+      // 1) Obtener todas las paradas
+      final todas = await paradasService.listarParadas();
+
+      // 2) Obtener las ya desbloqueadas
+      final desbloqueos = await obtenerDesbloqueosPorUsuario(usuarioId);
+
+      final idsDesbloqueados = desbloqueos.map((d) => d.paradaId).toList();
+
+      // 3) Ordenar por "orden"
+      final ordenadas = [...todas]..sort((a, b) => a.orden.compareTo(b.orden));
+
+      // 4) Buscar la primera no desbloqueada
+      ParadasDTO? siguiente;
+      for (var p in ordenadas) {
+        if (!idsDesbloqueados.contains(p.id)) {
+          siguiente = p;
+          break;
+        }
+      }
+
+      if (siguiente == null) return null;
+
+      // 5) Registrar desbloqueo
+      await registrarDesbloqueo(usuarioId, siguiente.id);
+
+      return siguiente;
+    } catch (e) {
+      print("Error en desbloquearSiguienteParada: $e");
+      rethrow;
+    }
+  }
+
 }

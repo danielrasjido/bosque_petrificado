@@ -41,7 +41,7 @@ class TarjetaBienvenidaWidget extends StatelessWidget {
               style: Theme.of(context)
                   .textTheme
                   .bodyMedium
-                  ?.copyWith(color: Colors.black54),
+                  ?.copyWith(color: AppConfig.colorPrincipal),
             ),
           ],
         ),
