@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:appwrite/appwrite.dart';
 import 'package:bosque_petrificado/models/ParadasDTO.dart';
-import 'package:bosque_petrificado/services/paradasService.dart';
-import 'package:bosque_petrificado/config/appConfig.dart';
+import 'package:bosque_petrificado/services/serviceLocator.dart';
 import 'package:bosque_petrificado/screens/paradaScreen.dart';
+import 'package:bosque_petrificado/config/appConfig.dart';
 
 class MenuParadasScreen extends StatefulWidget {
   const MenuParadasScreen({super.key});
@@ -13,28 +12,15 @@ class MenuParadasScreen extends StatefulWidget {
 }
 
 class _MenuParadasScreenState extends State<MenuParadasScreen> {
-  late ParadasService _paradasService;
-  late Databases _databases;
+  final _paradasService = ServiceLocator().paradasService;
+
   List<ParadasDTO> _paradas = [];
   bool _cargando = true;
 
   @override
   void initState() {
     super.initState();
-    _inicializarService();
-  }
-
-  void _inicializarService() async {
-    // Configurar Appwrite Client
-    final client = Client()
-      ..setEndpoint(AppConfig.endpoint)
-      ..setProject(AppConfig.idProject)
-      ..setSelfSigned(status: true);
-
-    _databases = Databases(client);
-    _paradasService = ParadasService(databases: _databases);
-
-    await _cargarParadas();
+    _cargarParadas();
   }
 
   Future<void> _cargarParadas() async {
@@ -52,6 +38,10 @@ class _MenuParadasScreenState extends State<MenuParadasScreen> {
     }
   }
 
+  String _buildImageUrl(String fileId) {
+    return "${AppConfig.endpoint}/storage/buckets/${AppConfig.idBucketMultimedia}/files/$fileId/view?project=${AppConfig.idProject}";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,6 +56,7 @@ class _MenuParadasScreenState extends State<MenuParadasScreen> {
         itemCount: _paradas.length,
         itemBuilder: (context, index) {
           final parada = _paradas[index];
+
           return Card(
             margin: const EdgeInsets.symmetric(
                 horizontal: 16, vertical: 8),
@@ -79,41 +70,61 @@ class _MenuParadasScreenState extends State<MenuParadasScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        ParadaScreen(parada: parada),
+                    builder: (_) => ParadaScreen(parada: parada),
                   ),
                 );
               },
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Imagen real desde Appwrite
                   Container(
                     width: 100,
                     height: 100,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: const BorderRadius.only(
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(12),
                         bottomLeft: Radius.circular(12),
                       ),
                     ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.image_outlined,
-                        size: 40,
-                        color: Colors.black54,
+                    clipBehavior: Clip.hardEdge,
+                    child: parada.imagen.isEmpty
+                        ? Container(
+                      color: Colors.grey[300],
+                      child: const Center(
+                        child: Icon(
+                          Icons.image_outlined,
+                          size: 40,
+                          color: Colors.black54,
+                        ),
                       ),
+                    )
+                        : Image.network(
+                      _buildImageUrl(parada.imagen),
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, _, __) {
+                        return Container(
+                          color: Colors.grey[300],
+                          child: const Center(
+                            child: Icon(
+                              Icons.broken_image_outlined,
+                              size: 40,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
 
                   const SizedBox(width: 10),
 
-                  //Textos dentro de Expanded para que no se desborde
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment:
+                        CrossAxisAlignment.start,
                         children: [
                           Text(
                             parada.nombreParada,
@@ -127,7 +138,8 @@ class _MenuParadasScreenState extends State<MenuParadasScreen> {
                             parada.descripcionParada,
                             maxLines: 3,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(color: Colors.black87),
+                            style: const TextStyle(
+                                color: Colors.black87),
                           ),
                         ],
                       ),

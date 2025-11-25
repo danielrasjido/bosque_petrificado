@@ -6,7 +6,7 @@ class AppConfig{
   static const String idProject = '68f6caff0036fd8024e1';
   static const String idCollectionParadas = 'Paradas';
   static const String idCollectionUsuarios = 'Usuarios';
-  static const String idBucketMultimedia = '68f924e800153324dd90';
+  static const String idBucketMultimedia = '68f924e800153324dd90'; //68f924e800153324dd90
   static const String endpoint = 'https://nyc.cloud.appwrite.io/v1';
 
 
