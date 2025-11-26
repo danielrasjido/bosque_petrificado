@@ -14,6 +14,8 @@ import '../screens/loginScreen.dart';
 
 import '../config/appConfig.dart';
 
+import 'package:bosque_petrificado/scripts/cargar_paradas_test.dart';
+
 class HomeScreen extends StatefulWidget{
   final UsuariosService usuarioService;
   const HomeScreen({super.key, required this.usuarioService});
