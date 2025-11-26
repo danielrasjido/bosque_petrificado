@@ -152,5 +152,24 @@ class ParadasService{
     }
   }
 
+  Future<List<ParadasDTO>> listarParadasOrdenadas() async {
+    try {
+      final response = await _databases.listDocuments(
+        databaseId: AppConfig.idDatabase,
+        collectionId: AppConfig.idCollectionParadas,
+        queries: [
+          Query.orderAsc("orden"),
+        ],
+      );
+
+      return response.documents.map((doc) {
+        return ParadasDTO.fromDocument(doc.data, doc.$id);
+      }).toList();
+    } catch (e) {
+      throw ParadasException("Error al listar paradas ordenadas: $e");
+    }
+  }
+
+
 
 }

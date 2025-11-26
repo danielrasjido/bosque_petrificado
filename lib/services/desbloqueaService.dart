@@ -144,4 +144,23 @@ class DesbloqueaService {
     }
   }
 
+  Future<List<DesbloqueaDTO>> listarParadasDesbloqueadas(String usuarioId) async {
+    try {
+      final response = await _databases.listDocuments(
+        databaseId: AppConfig.idDatabase,
+        collectionId: AppConfig.idCollectionDesbloquea,
+        queries: [
+          Query.equal("usuarioId", usuarioId),
+        ],
+      );
+
+      return response.documents.map((doc) {
+        return DesbloqueaDTO.fromDocument(doc.data, doc.$id);
+      }).toList();
+    } catch (e) {
+      throw DesbloqueaException("Error listando paradas desbloqueadas: $e");
+    }
+  }
+
+
 }
