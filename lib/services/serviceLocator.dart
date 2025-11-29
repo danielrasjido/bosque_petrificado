@@ -14,13 +14,10 @@ class ServiceLocator {
 
   late final Client client;
   late final Databases databases;
-
   late final AuthenticationService authService;
   late final UsuariosService usuariosService;
   late final ParadasService paradasService;
-
   late RecorridoService recorridoService;
-
   late DesbloqueaService desbloqueaService;
 
   ServiceLocator._internal() {

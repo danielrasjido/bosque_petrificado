@@ -94,7 +94,7 @@ class _MyAppState extends State<HomeScreen>{
             pasosRecorridos = pasos - pasosInicio;
 
             // Si llega a 5000, procesar paso se desbloquea una parada
-            if (pasosRecorridos >= 5000) {
+            if (pasosRecorridos >= 5) {
               _procesarDesbloqueo();
             }
 
