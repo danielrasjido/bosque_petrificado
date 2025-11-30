@@ -15,15 +15,12 @@ class DesbloqueaService {
       : _databases = databases;
 
   /// Registrar desbloqueo con ID compuesto, usario + parada
-  Future<bool> registrarDesbloqueo(
-      String usuarioId, String paradaId) async {
-    final idCompuesto = '${usuarioId}_$paradaId';
-
+  Future<bool> registrarDesbloqueo(String usuarioId, String paradaId) async {
     try {
       await _databases.createDocument(
         databaseId: idDB,
         collectionId: idCollection,
-        documentId: idCompuesto,
+        documentId: ID.unique(), // ID automático
         data: {
           'usuarioId': usuarioId,
           'paradaId': paradaId,
@@ -41,6 +38,7 @@ class DesbloqueaService {
       );
     }
   }
+
 
   /// Listar las paradas que el usuario desbloqueó
   Future<List<DesbloqueaDTO>> obtenerDesbloqueosPorUsuario(

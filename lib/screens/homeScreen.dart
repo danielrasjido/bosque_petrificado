@@ -94,7 +94,7 @@ class _MyAppState extends State<HomeScreen>{
             pasosRecorridos = pasos - pasosInicio;
 
             // Si llega a 5000, procesar paso se desbloquea una parada
-            if (pasosRecorridos >= 5) {
+            if (pasosRecorridos >= 5000) {
               _procesarDesbloqueo();
             }
 
@@ -279,23 +279,7 @@ class _MyAppState extends State<HomeScreen>{
                   child: const Text("Iniciar recorrido"),
                 ),
 
-              if (recorridoActivo)
-                Column(
-                  children: [
-                    Text("Pasos recorridos: $pasosRecorridos",
-                        style: const TextStyle(fontSize: 18)),
 
-                    const SizedBox(height: 10),
-
-                    if (inicioRecorrido != null)
-                      Text(
-                        "Tiempo transcurrido: ${DateTime.now().difference(inicioRecorrido!).inMinutes} min",
-                        style: const TextStyle(fontSize: 18),
-                      ),
-
-                    const SizedBox(height: 30),
-                  ],
-                ),
 
               TarjetaPodometroWidget(
                 podometroCargando: podometroCargando,
