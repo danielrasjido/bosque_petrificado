@@ -131,6 +131,30 @@ class UsuariosService {
       throw UsuariosException('Error desconocido al eliminar usuario: $e');
     }
   }
+
+  Future<void> crearUsuarioEnBD({
+    required String nombre,
+    required String email,
+    required String telefono,
+    required String contrasena,
+  }) async {
+    await _databases.createDocument(
+      databaseId: AppConfig.idDatabase,
+      collectionId: AppConfig.idCollectionUsuarios,
+      documentId: ID.unique(),
+      data: {
+        'nombre': nombre,
+        'correoElectronico': email,
+        'telefono': telefono,
+        'contrasena': contrasena,
+        'fechaNacimiento': null,
+        'esAdmin': false,
+      },
+    );
+  }
+
+
+
 }
 
 

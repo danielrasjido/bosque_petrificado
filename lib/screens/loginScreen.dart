@@ -5,6 +5,8 @@ import 'package:bosque_petrificado/models/UsuariosDTO.dart';
 import 'package:bosque_petrificado/config/appConfig.dart';
 import 'package:bosque_petrificado/screens/homeScreen.dart';
 import 'package:bosque_petrificado/screens/adminHomeScreen.dart'; //
+import 'package:bosque_petrificado/screens/RegistroScreen.dart';
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -138,7 +140,37 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: _iniciarSesion,
                     child: const Text('Ingresar'),
                   ),
+
+                  SizedBox(height: 20),
+
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => RegistroScreen()),
+                      );
+                    },
+                    child: RichText(
+                      text: TextSpan(
+                        text: "¿No tienes cuenta? ",
+                        style: const TextStyle(color: Colors.black),
+                        children: [
+                          TextSpan(
+                            text: "Crea una",
+                            style: TextStyle(
+                              color: colorPrincipal,
+                              fontWeight: FontWeight.bold,
+                              decoration: TextDecoration.underline,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+
+
                 ],
+
               ),
             ),
           ),

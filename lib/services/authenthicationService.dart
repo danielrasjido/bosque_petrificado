@@ -4,12 +4,17 @@ import 'package:bosque_petrificado/services/usuariosService.dart';
 import 'package:bosque_petrificado/exceptions/authException.dart';
 
 class AuthenticationService {
+  final Client _client;
   final Account _account;
   final UsuariosService _usuariosService;
 
   AuthenticationService(Client client, Databases databases)
       : _account = Account(client),
-        _usuariosService = UsuariosService(databases: databases);
+        _usuariosService = UsuariosService(databases: databases),
+        _client = client;
+
+  /// Getter público del cliente
+  Client get client => _client;
 
   ///Iniciar sesión con email y contraseña
   Future<UsuariosDTO?> login(String email, String password) async {
