@@ -136,12 +136,15 @@ class _MyAppState extends State<HomeScreen>{
     }
   }
 
-  void _reiniciarPodometro(){
+  void _reiniciarPodometro() {
     _podometroService.reiniciarContador();
     setState(() {
       pasos = 0;
+      pasosInicio = 0;
+      inicioRecorrido = null; // ESTO reinicia los minutos
     });
   }
+
 
   Future<void> _cerrarSesion() async {
     try {
