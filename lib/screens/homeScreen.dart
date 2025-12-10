@@ -94,7 +94,7 @@ class _MyAppState extends State<HomeScreen>{
             pasosRecorridos = pasos - pasosInicio;
 
             // Si llega a 5000, procesar paso se desbloquea una parada
-            if (pasosRecorridos >= 5000) {
+            if (pasosRecorridos >= 50) {
               _procesarDesbloqueo();
             }
 
@@ -246,17 +246,22 @@ class _MyAppState extends State<HomeScreen>{
 
       final parada = await desbloqueaService.desbloquearSiguienteParada(usuario.id);
 
-      // esto es para limpiar el recorrido una vez desbloqueada la parada
+      // 1) Limpiar datos persistidos del recorrido
       await recorridoService.limpiarRecorrido();
 
+      // 2) Reiniciar contador de pasos local (como en _reiniciarPodometro)
+      _podometroService.reiniciarContador();
+
+      // 3) Dejar el estado listo para un NUEVO recorrido
       setState(() {
-        recorridoActivo = false;
-        pasosRecorridos = 0;
-        inicioRecorrido = null;
+        recorridoActivo = false;   // <-- obliga a tocar "Iniciar recorrido" de nuevo
+        pasos = 0;
         pasosInicio = 0;
-        inicioRecorrido = null;
+        pasosRecorridos = 0;
+        inicioRecorrido = null;    // minutosRecorrido pasa a null
       });
 
+      // 4) Si ya no hay más paradas
       if (parada == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -267,6 +272,7 @@ class _MyAppState extends State<HomeScreen>{
         return;
       }
 
+      // 5) Mostrar mensaje de éxito
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Parada desbloqueada: ${parada.nombreParada}"),

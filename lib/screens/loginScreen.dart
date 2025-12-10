@@ -112,6 +112,15 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Image.asset(
+                      "assets/logo.png",
+                      width: 120,
+                      height: 120,
+                    ),
+                  ),
+
                   const Text(
                     'Iniciar sesión',
                     style: TextStyle(
