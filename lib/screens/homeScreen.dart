@@ -136,23 +136,40 @@ class _MyAppState extends State<HomeScreen>{
     }
   }
 
-  void _reiniciarPodometro() {
+  void _reiniciarPodometro() async {
+    final recorridoService = ServiceLocator().recorridoService;
+
     _podometroService.reiniciarContador();
+
+    await recorridoService.limpiarRecorrido();
+
     setState(() {
       pasos = 0;
       pasosInicio = 0;
       inicioRecorrido = null; // ESTO reinicia los minutos
+      recorridoActivo = false;
     });
-  }
 
+
+  }
 
   Future<void> _cerrarSesion() async {
     try {
       final authService = ServiceLocator().authService;
+      final recorridoService = ServiceLocator().recorridoService;
 
       await authService.logout();
+      await recorridoService.limpiarRecorrido();
 
       if (!mounted) return;
+
+      setState(() {
+        recorridoActivo = false;
+        pasos = 0;
+        pasosInicio = 0;
+        pasosRecorridos = 0;
+        inicioRecorrido = null;
+      });
 
       Navigator.pushReplacement(
         context,
@@ -168,16 +185,41 @@ class _MyAppState extends State<HomeScreen>{
   Future<void> _verificarEstadoRecorrido() async {
     final recorridoService = ServiceLocator().recorridoService;
 
-    final inicio = await recorridoService.getInicio();
-    final pasos = await recorridoService.getPasosInicio();
+    final inicioMs = await recorridoService.getInicio();
+    final pasosGuardados = await recorridoService.getPasosInicio();
 
-    if (inicio != null && pasos != null) {
+    if (inicioMs == null || pasosGuardados == null) {
+      setState(() {
+        recorridoActivo = false;
+        pasosInicio = 0;
+        pasosRecorridos = 0;
+        inicioRecorrido = null;
+      });
+      return;
+    }
+
+    final inicio = DateTime.fromMillisecondsSinceEpoch(inicioMs);
+    final diff = DateTime.now().difference(inicio);
+
+    // Si pasaron 24 horas, se resetea el recorrido
+    if (diff >= const Duration(hours: 24)) {
+      await recorridoService.limpiarRecorrido();
+      setState(() {
+        recorridoActivo = false;
+        pasosInicio = 0;
+        pasosRecorridos = 0;
+        inicioRecorrido = null;
+      });
+    } else {
+      // todavía está dentro de las 24h
       setState(() {
         recorridoActivo = true;
-        inicioRecorrido = DateTime.fromMillisecondsSinceEpoch(inicio);
-        pasosInicio = pasos;
+        inicioRecorrido = inicio;
+        pasosInicio = pasosGuardados;
+        pasosRecorridos = pasos - pasosGuardados;
       });
     }
+
   }
 
   Future<void> _iniciarRecorrido() async {
@@ -193,8 +235,6 @@ class _MyAppState extends State<HomeScreen>{
     });
   }
 
-
-
   Future<void> _procesarDesbloqueo() async {
     try {
       final authService = ServiceLocator().authService;
@@ -206,12 +246,14 @@ class _MyAppState extends State<HomeScreen>{
 
       final parada = await desbloqueaService.desbloquearSiguienteParada(usuario.id);
 
-      // Limpiar recorrido
+      // esto es para limpiar el recorrido una vez desbloqueada la parada
       await recorridoService.limpiarRecorrido();
 
       setState(() {
         recorridoActivo = false;
         pasosRecorridos = 0;
+        inicioRecorrido = null;
+        pasosInicio = 0;
         inicioRecorrido = null;
       });
 
